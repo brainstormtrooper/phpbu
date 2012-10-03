@@ -17,6 +17,12 @@ $DBHost ='sql.free.fr';
 get this ready for $_GET
 */
 
+
+function backupFileSystem($src, $dest){
+
+}
+
+
     if (extension_loaded('zip') ){
       //  die ("no zip extension");
 
