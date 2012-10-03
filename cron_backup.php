@@ -1,60 +1,77 @@
 <?php
 // config stuff
 
-$baseSrcDir = '/path/to/src/folder';
-$destDir = '/path/to/backup/folder';
-$destZipName = $destDir . '/' . date("Y-m-d") . "-backup.zip";
-$destSQLName = $destDir . '/' . date("Y-m-d") . "-dbbackup.sql";
 
-$srcDBName = 'database';
+$cfg_srcDir = '/path/to/src/folder';
+$cfg_destDir = '/path/to/dest/folder';
+$cfg_destZipName = $cfg_srcDir . '/' . date("Y-m-d") . "-backup.zip";
+$cfg_destSQLName = $cfg_srcDir . '/' . date("Y-m-d") . "-dbbackup.sql";
 
-$DBUser = 'user';
-$DBPass = 'password';
-$DBHost ='localhost';
+$cfg_srcDBName = 'database';
 
-$defAction = '*';
-// get the rood directory with this...
+$cfg_DBUser = 'user';
+$cfg_DBPass = 'pass';
+$cfg_DBHost ='host';
+
+
+$cfg_keepCount = 5;
+
+// $cfg_defAction = '*'; // not needed
+// get the root directory with this...
 
 /*
 get this ready for $_GET
 */
-
-
-
-if($_GET['buaction']) {
-	switch($_GET['buaction']) {
-		case 'files':
-		backupFileSystem($baseSrcDir, $destDir, $destZipName );
-		
-		case 'db':
-		backup_tables($DBHost,$DBUser,$DBPass,$srcDBName, $destSQLName, $tables = '*');
-		
-		default:
-		backupFileSystem($baseSrcDir, $destDir, $destZipName );
-		backup_tables($DBHost,$DBUser,$DBPass,$srcDBName, $destSQLName, $tables = '*');
-	
+if(isset($_GET['bu_srcDir'])) {
+	$cfg_srcDir = $_GET['bu_srcDir'];
 }
 
+if($_GET['bu_action']) {
+
+$sd = $cfg_srcDir;
+$dd = (isset($_GET['bu_destDir']))?$_GET['bu_destDir']:$cfg_destDir;
+$dz = (isset($_GET['bu_destZip']))?$_GET['bu_destZip']:$cfg_destZipName;
+$dq = (isset($_GET['bu_destSql']))?$_GET['bu_destSql']:$cfg_destSQLName;
+$sb = (isset($_GET['bu_srcDB']))?$_GET['bu_srcDB']:$cfg_srcDBName;
+
+
+
+	switch($_GET['bu_action']) {
+		case 'files':
+		backupFileSystem($sd, $dd, $dz);
+		trimdir($dd, $cfg_keepCount);
+		
+		case 'db':
+		backup_tables($cfg_DBHost,$cfg_DBUser,$cfg_DBPass,$cfg_srcDBName, $dq, $tables = '*');
+		
+		default:
+		backupFileSystem($sd, $dd, $dz);
+		backup_tables($cfg_DBHost,$cfg_DBUser,$cfg_DBPass,$cfg_srcDBName, $dq, $tables = '*');
+		trimdir($dd, $cfg_keepCount);
+		
+	}
+} 
 
 
 
 
 
 
-function backupFileSystem($src=$baseSrcDir, $destFolder=$destDir, $zipFile=$destZipName ){
+
+function backupFileSystem($sd, $dd, $dz){
 
     if (extension_loaded('zip') ){
       //  die ("no zip extension");
 		$zip = new ZipArchive();
 
 		//if($zip->open($destZipName, ZIPARCHIVE::CREATE) !== TRUE ) 
-		if($zip->open($destZipName) !== TRUE ) 
+		if($zip->open($dz) !== TRUE ) 
 		{
 			die ("Could not open archive");
 		}
 		// initialize an iterator
 		// pass it the directory to be processed
-		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseSrcDir));
+		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sd));
 		// iterate over the directory
 		// add each file found to the archive
 		foreach ($iterator as $key=>$value) {
@@ -66,8 +83,8 @@ function backupFileSystem($src=$baseSrcDir, $destFolder=$destDir, $zipFile=$dest
 
 
 	} else {
-		$destination = $destDir . '/' . date("Y-m-d");
-		copy_directory( $baseSrcDir, $destination );
+		$destination = $dd . '/' . date("Y-m-d");
+		copy_directory( $sd, $destination );
 	}
 	
 }
@@ -144,7 +161,7 @@ die("no DB link");
 
 // check folders
 
-function trimdir($destDir){
+function trimdir($destDir, $keepCount){
 
 
 // check folders
