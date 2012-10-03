@@ -144,10 +144,13 @@ die("no DB link");
 
 // check folders
 
-function trimdir(){
+function trimdir($destDir){
+
+
+// check folders
   $dh = opendir($destDir);
     while (false !== ($file = readdir($dh))) {
-    ;
+    
     if ($file == '.' || $file == '..') {
     continue; // skip this file
     }
@@ -156,12 +159,25 @@ function trimdir(){
     $file_type_location=$file_parts_counts-1;
     $file_type=$file_parts[$file_type_location];
     $count=$count+1;
-    }
-if(count($files) >= 4){
-//delete oldest
+    if(is_dir($destDir . '/' . $file)){
+    	   $flist[filectime($destDir . '/' . $file)] = $destDir . '/' . $file; 
+    		
+    	}
 
-	
-	}
+    }
+
+    if($count > $keepCount) {
+    	
+    ASORT($flist, SORT_NUMERIC); 
+    RESET($flist); 
+    unlink($flist['path']); 
+    //print $oldest; 
+    
+ }
+   closedir($dh); 
+
+
+
 }
 // copy files
 function copy_directory( $source, $destination ) {
