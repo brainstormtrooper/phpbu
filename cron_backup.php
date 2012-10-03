@@ -12,51 +12,55 @@ $DBUser = 'user';
 $DBPass = 'password';
 $DBHost ='localhost';
 
+$defAction = '*';
+// get the rood directory with this...
 
 /*
 get this ready for $_GET
 */
 
 
-function backupFileSystem($src, $dest){
+backup_tables($DBHost,$DBUser,$DBPass,$srcDBName, $destSQLName, $tables = '*');
 
-}
+backupFileSystem($baseSrcDir, $destDir, $destZipName );
 
+
+
+function backupFileSystem($src=$baseSrcDir, $destFolder=$destDir, $zipFile=$destZipName ){
 
     if (extension_loaded('zip') ){
       //  die ("no zip extension");
+		$zip = new ZipArchive();
+
+		//if($zip->open($destZipName, ZIPARCHIVE::CREATE) !== TRUE ) 
+		if($zip->open($destZipName) !== TRUE ) 
+		{
+			die ("Could not open archive");
+		}
+		// initialize an iterator
+		// pass it the directory to be processed
+		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseSrcDir));
+		// iterate over the directory
+		// add each file found to the archive
+		foreach ($iterator as $key=>$value) {
+			$zip->addFile(realpath($key), $key) or die ("ERROR: Could not add file: $key");
+		}
+		// close and save archive
+		$zip->close();
+		//echo "Archive created successfully.";
 
 
-$zip = new ZipArchive();
-
-// open archive)
-//if($zip->open($destZipName, ZIPARCHIVE::CREATE) !== TRUE ) 
-if($zip->open($destZipName) !== TRUE ) 
-{
-	die ("Could not open archive");
-}
-// initialize an iterator
-// pass it the directory to be processed
-$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseSrcDir));
-// iterate over the directory
-// add each file found to the archive
-foreach ($iterator as $key=>$value) {
-$zip->addFile(realpath($key), $key) or die ("ERROR: Could not add file: $key");
-}
-// close and save archive
-$zip->close();
-echo "Archive created successfully.";
-
-
-} else {
-	$destination = $destDir . '/' . date("Y-m-d");
-	copy_directory( $baseSrcDir, $destination );
+	} else {
+		$destination = $destDir . '/' . date("Y-m-d");
+		copy_directory( $baseSrcDir, $destination );
 	}
+	
+}
 // get DB
 
-// system("mysqldump -h lsql.free.fr -u YnJhaW5zdG9ybXRyb29wZXI= -pYjV0cjAwcDM= brainstormtrooper > /mnt/168/sda/6/7/brainstormtrooper/pass/BACKUPFILENAME.sql");
 
-backup_tables($DBHost,$DBUser,$DBPass,$srcDBName, $destSQLName, $tables = '*');
+
+
 
 function backup_tables($host,$user,$pass,$name, $outputfile, $tables = '*')
 {
