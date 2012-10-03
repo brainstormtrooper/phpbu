@@ -1,16 +1,16 @@
 <?php
 // config stuff
 
-$baseSrcDir = '/mnt/168/sda/6/7/brainstormtrooper/EN';
-$destDir = '/mnt/168/sda/6/7/brainstormtrooper/backup';
+$baseSrcDir = '/path/to/src/folder';
+$destDir = '/path/to/backup/folder';
 $destZipName = $destDir . '/' . date("Y-m-d") . "-backup.zip";
 $destSQLName = $destDir . '/' . date("Y-m-d") . "-dbbackup.sql";
 
-$srcDBName = 'brainstormtrooper';
+$srcDBName = 'database';
 
-$DBUser = 'brainstormtrooper';
-$DBPass = 'b5tr00p3';
-$DBHost ='sql.free.fr';
+$DBUser = 'user';
+$DBPass = 'password';
+$DBHost ='localhost';
 
 
 /*
