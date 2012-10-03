@@ -13,6 +13,10 @@ $DBPass = 'b5tr00p3';
 $DBHost ='sql.free.fr';
 
 
+/*
+get this ready for $_GET
+*/
+
     if (extension_loaded('zip') ){
       //  die ("no zip extension");
 
