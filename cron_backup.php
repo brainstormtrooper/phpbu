@@ -20,9 +20,24 @@ get this ready for $_GET
 */
 
 
-backup_tables($DBHost,$DBUser,$DBPass,$srcDBName, $destSQLName, $tables = '*');
 
-backupFileSystem($baseSrcDir, $destDir, $destZipName );
+if($_GET['buaction']) {
+	switch($_GET['buaction']) {
+		case 'files':
+		backupFileSystem($baseSrcDir, $destDir, $destZipName );
+		
+		case 'db':
+		backup_tables($DBHost,$DBUser,$DBPass,$srcDBName, $destSQLName, $tables = '*');
+		
+		default:
+		backupFileSystem($baseSrcDir, $destDir, $destZipName );
+		backup_tables($DBHost,$DBUser,$DBPass,$srcDBName, $destSQLName, $tables = '*');
+	
+}
+
+
+
+
 
 
 
@@ -128,6 +143,8 @@ die("no DB link");
 
 
 // check folders
+
+function trimdir(){
   $dh = opendir($destDir);
     while (false !== ($file = readdir($dh))) {
     ;
@@ -145,7 +162,7 @@ if(count($files) >= 4){
 
 	
 	}
-
+}
 // copy files
 function copy_directory( $source, $destination ) {
 	if ( is_dir( $source ) ) {
