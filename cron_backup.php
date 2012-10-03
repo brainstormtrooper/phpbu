@@ -1,17 +1,18 @@
 <?php
 // config stuff
 
+$cfg_srcRoot = '/path/to/site/root/';
+$cfg_srcDir = 'folder_to_backup';
+$cfg_srcDBName = 'db_to_backup';
+$cfg_destDir = '/path/to/backup/files';
+$cfg_destZipName = $cfg_destDir . '/' . date("Y-m-d") . '/' . $cfg_srcDir . "-backup.zip";
+$cfg_destSQLName = $cfg_destDir . '/' . date("Y-m-d") . '/' . $cfg_srcDBName . "-dbbackup.sql";
 
-$cfg_srcDir = '/path/to/src/folder';
-$cfg_destDir = '/path/to/dest/folder';
-$cfg_destZipName = $cfg_srcDir . '/' . date("Y-m-d") . "-backup.zip";
-$cfg_destSQLName = $cfg_srcDir . '/' . date("Y-m-d") . "-dbbackup.sql";
 
-$cfg_srcDBName = 'database';
 
-$cfg_DBUser = 'user';
-$cfg_DBPass = 'pass';
-$cfg_DBHost ='host';
+$cfg_DBUser = 'dbuser';
+$cfg_DBPass = 'dbpass';
+$cfg_DBHost ='dbhost';
 
 
 $cfg_keepCount = 5;
@@ -26,31 +27,44 @@ if(isset($_GET['bu_srcDir'])) {
 	$cfg_srcDir = $_GET['bu_srcDir'];
 }
 
+
+$sn = $cfg_srcDir;
+$sd = $cfg_srcRoot . $sn;
+$dd = (isset($_GET['bu_destDir']))?$_GET['bu_destDir']:$cfg_destDir;
+$dz = (isset($_GET['bu_destZip']))?$dd . '/' . $_GET['bu_destZip']:$cfg_destZipName;
+$dq = (isset($_GET['bu_destSql']))?$dd . '/' . $_GET['bu_destSql']:$cfg_destSQLName;
+$sb = (isset($_GET['bu_srcDB']))?$_GET['bu_srcDB']:$cfg_srcDBName;
+
+
 if($_GET['bu_action']) {
 
-$sd = $cfg_srcDir;
-$dd = (isset($_GET['bu_destDir']))?$_GET['bu_destDir']:$cfg_destDir;
-$dz = (isset($_GET['bu_destZip']))?$_GET['bu_destZip']:$cfg_destZipName;
-$dq = (isset($_GET['bu_destSql']))?$_GET['bu_destSql']:$cfg_destSQLName;
-$sb = (isset($_GET['bu_srcDB']))?$_GET['bu_srcDB']:$cfg_srcDBName;
+
 
 
 
 	switch($_GET['bu_action']) {
 		case 'files':
-		backupFileSystem($sd, $dd, $dz);
+		backupFileSystem($sd, $dd, $dz, $sn);
 		trimdir($dd, $cfg_keepCount);
+		break;
 		
 		case 'db':
 		backup_tables($cfg_DBHost,$cfg_DBUser,$cfg_DBPass,$cfg_srcDBName, $dq, $tables = '*');
+		break;
 		
 		default:
-		backupFileSystem($sd, $dd, $dz);
+		backupFileSystem($sd, $dd, $dz, $sn);
 		backup_tables($cfg_DBHost,$cfg_DBUser,$cfg_DBPass,$cfg_srcDBName, $dq, $tables = '*');
 		trimdir($dd, $cfg_keepCount);
 		
 	}
-} 
+} else {
+
+	backupFileSystem($sd, $dd, $dz, $sn);
+	backup_tables($cfg_DBHost,$cfg_DBUser,$cfg_DBPass,$cfg_srcDBName, $dq, $tables = '*');
+	trimdir($dd, $cfg_keepCount);
+
+}
 
 
 
@@ -58,7 +72,7 @@ $sb = (isset($_GET['bu_srcDB']))?$_GET['bu_srcDB']:$cfg_srcDBName;
 
 
 
-function backupFileSystem($sd, $dd, $dz){
+function backupFileSystem($sd, $dd, $dz, $sn){
 
     if (extension_loaded('zip') ){
       //  die ("no zip extension");
@@ -83,7 +97,7 @@ function backupFileSystem($sd, $dd, $dz){
 
 
 	} else {
-		$destination = $dd . '/' . date("Y-m-d");
+		$destination = $dd . '/' . date("Y-m-d") . '/' . $sn . '-bak';
 		copy_directory( $sd, $destination );
 	}
 	
