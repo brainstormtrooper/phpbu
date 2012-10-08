@@ -1,5 +1,14 @@
 <?php
 /****************************************
+php backup script to create backups / archives of file folders and databases. 
+
+@ copywrite : Rick Opper (BrainstormTrooper) 2012
+@ url : www.brainstormtrooper.com
+@ e-mail : brainstormtrooper@free.fr
+@ git : http://github.com/brainstormtrooper/phpbu
+
+****************************************/
+/****************************************
 		Config Stuff
 
 @ $cfg_srcRoot : root folder (dossier racine du site)
