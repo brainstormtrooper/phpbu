@@ -1,28 +1,49 @@
 <?php
-// config stuff
+/****************************************
+		Config Stuff
 
-$cfg_srcRoot = '/path/to/site/root/';
+@ $cfg_srcRoot : root folder (dossier racine du site)
+@ $cfg_srcDir : folder to back up (dossier (nom) à archiver)
+@ $cfg_srcDBName : database to back up (base de données à archiver)
+@ $cfg_destDir : base directory to save backups to (dossier dans lequel mettre les archives)
+@ $cfg_destZipName : the name to give the zip archive (nom de l'archive à créer)
+@ $cfg_destSQLName : the name to give the SQL backup file (nom du ficher SQL à créer)
+@ $cfg_DBUser : database user (utilisateur de la base de données)
+@ $cfg_DBPass : database password (mot de passe pour le base de données)
+@ $cfg_DBHost : database host (address pour la base de données)
+@ $cfg_keepCount : backups to keep (combien d'archives garder)
+@ $cfg_key : key to send to start backup (clé pour demarer l'archivage)
+
+*****************************************/
+
+$cfg_srcRoot = '/path/to/site/root/'; 
 $cfg_srcDir = 'folder_to_backup';
 $cfg_srcDBName = 'db_to_backup';
 $cfg_destDir = '/path/to/backup/files';
 $cfg_destZipName = $cfg_destDir . '/' . date("Y-m-d") . '/' . $cfg_srcDir . "-backup.zip";
 $cfg_destSQLName = $cfg_destDir . '/' . date("Y-m-d") . '/' . $cfg_srcDBName . "-dbbackup.sql";
 
-
+$cfg_key = 'whatever you want';
 
 $cfg_DBUser = 'dbuser';
 $cfg_DBPass = 'dbpass';
 $cfg_DBHost ='dbhost';
 
-
 $cfg_keepCount = 5;
 
-// $cfg_defAction = '*'; // not needed
-// get the root directory with this...
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 /*
 get this ready for $_GET
 */
+
+if($cfg_key != $_REQUEST['key']) {
+	die('not qualified');
+	
+}
+
 if(isset($_GET['bu_srcDir'])) {
 	$cfg_srcDir = $_GET['bu_srcDir'];
 }
